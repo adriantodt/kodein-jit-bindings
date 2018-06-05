@@ -1,8 +1,8 @@
-package org.kodein.di.jit
+package pw.aru.kodein.jit
 
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
-import org.kodein.di.jit.internal.JITContainer
+import pw.aru.kodein.jit.internal.JITContainer
 
 /**
  * Injector that allows to build objects just-in-time.
@@ -11,14 +11,17 @@ import org.kodein.di.jit.internal.JITContainer
  */
 class KodeinJIT internal constructor(private val kodein: DKodein, private val container: JITContainer) {
 
-    /** @suppress */
+    /**
+     * Creates a new instance of the given class.
+     *
+     * @param cls The type of object to create.
+     */
     fun <T : Any> newInstance(cls: Class<T>) = container.newInstance(kodein, cls)
 
     /**
      * Creates a new instance of the given type.
      *
      * @param T The type of object to create.
-     * @param injectFields Whether to inject the fields & methods of he newly created instance before returning it.
      */
     inline fun <reified T : Any> newInstance() = newInstance(T::class.java)
 
