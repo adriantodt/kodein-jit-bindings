@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.2.41'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.60'
     id 'maven'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.0'
@@ -18,15 +18,21 @@ plugins {
 apply plugin: 'org.jetbrains.dokka'
 
 group = 'pw.aru.kt'
-version = '1.1.1'
+version = '1.2'
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.41'
-    compile 'org.kodein.di:kodein-di-core-jvm:5.0.0'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.60'
+    compile 'org.kodein.di:kodein-di-core-jvm:5.2.0'
+    testCompile 'io.kotlintest:kotlintest-runner-junit5:3.1.7'
+    testCompile 'org.kodein.di:kodein-di-generic-jvm:5.2.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileKotlin {

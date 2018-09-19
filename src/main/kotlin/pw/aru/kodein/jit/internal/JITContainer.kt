@@ -4,25 +4,23 @@ import org.kodein.di.DKodein
 import org.kodein.di.TT
 import org.kodein.di.TypeToken
 import pw.aru.kodein.jit.JIT
+import pw.aru.kodein.jit.Singleton
 import pw.aru.kodein.jit.rawType
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.concurrent.ConcurrentHashMap
 
-internal class JITContainer {
-
-    private val _constructors = ConcurrentHashMap<Class<*>, DKodein.() -> Any>()
+@Suppress("UNCHECKED_CAST")
+internal class JITContainer(private val kodein: DKodein) {
 
     private interface Element : AnnotatedElement {
+        override fun isAnnotationPresent(c: Class<out Annotation>) = getAnnotation(c) != null
+        override fun getDeclaredAnnotations(): Array<out Annotation> = annotations
+        override fun <T : Annotation?> getAnnotation(c: Class<T>) = annotations.firstOrNull { c.isAssignableFrom(it.javaClass) } as T?
+
         val classType: Class<*>
         val genericType: Type
-        override fun isAnnotationPresent(annotationClass: Class<out Annotation>) = getAnnotation(annotationClass) != null
-        override fun getDeclaredAnnotations(): Array<out Annotation> = annotations
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : Annotation?> getAnnotation(annotationClass: Class<T>) = annotations.firstOrNull { annotationClass.isAssignableFrom(it.javaClass) } as T?
-
         override fun toString(): String
     }
 
@@ -50,7 +48,6 @@ internal class JITContainer {
                 getterFunction { lazy { getter() } }
             }
             else -> {
-                @Suppress("UNCHECKED_CAST")
                 val boundType = TT(element.genericType) as TypeToken<out Any>
                 getterFunction { Instance(boundType) }
             }
@@ -63,39 +60,33 @@ internal class JITContainer {
             ?: if (cls.declaredConstructors.size == 1) cls.declaredConstructors[0]
             else throw IllegalArgumentException("Class ${cls.name} must either have only one constructor or an @JIT annotated constructor")
 
-        class ConstructorElement(private val _index: Int) : Element {
-            override val classType: Class<*> get() = constructor.parameterTypes[_index]
-            override val genericType: Type get() = constructor.genericParameterTypes[_index]
-            override fun getAnnotations() = constructor.parameterAnnotations[_index]
-            override fun toString() = "Parameter ${_index + 1} of $constructor"
+        class ConstructorElement(private val i: Int) : Element {
+            override val classType: Class<*> get() = constructor.parameterTypes[i]
+            override val genericType: Type get() = constructor.genericParameterTypes[i]
+            override fun getAnnotations() = constructor.parameterAnnotations[i]
+            override fun toString() = "Parameter ${i + 1} of $constructor"
         }
 
         val getters = (0 until constructor.parameterTypes.size).map { getter(ConstructorElement(it)) }
 
-        val isAccessible = constructor.isAccessible
-
         return {
-            val arguments = Array<Any?>(getters.size) { null }
-            getters.forEachIndexed { i, getter -> arguments[i] = getter() }
-
-            if (!isAccessible) constructor.isAccessible = true
-            try {
-                constructor.newInstance(*arguments)
-            } finally {
-                if (!isAccessible) constructor.isAccessible = false
-            }
+            constructor.isAccessible = true
+            constructor.newInstance(
+                *getters.map { it() }.toTypedArray()
+            )
         }
     }
-    private fun findConstructor(cls: Class<*>) = _constructors.getOrPut(cls) { createConstructor(cls) }
 
-    internal fun <T : Any> newInstance(kodein: DKodein, cls: Class<T>): T {
-        val constructor = findConstructor(cls)
+    private val constructors = object : ClassValue<DKodein.() -> Any>() {
+        override fun computeValue(type: Class<*>) = createConstructor(type)
+    }
 
-        @Suppress("UNCHECKED_CAST")
-        val instance = kodein.constructor() as T
+    private val singletons = object : ClassValue<Any>() {
+        override fun computeValue(type: Class<*>) = constructors[type]?.let { kodein.it() }
+    }
 
-        kodein.container
-
-        return instance
+    internal fun <T : Any> newInstance(cls: Class<T>): T {
+        val instance = if (cls.isAnnotationPresent(Singleton::class.java)) singletons[cls] else (constructors[cls]).invoke(kodein)
+        return instance as T
     }
 }
