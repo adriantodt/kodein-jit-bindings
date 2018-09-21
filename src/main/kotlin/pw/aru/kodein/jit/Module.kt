@@ -7,7 +7,7 @@ import org.kodein.di.bindings.Singleton
 import org.kodein.di.bindings.externalFactory
 import org.kodein.di.erased
 import org.kodein.di.jvmType
-import pw.aru.kodein.jit.internal.JITContainer
+import pw.aru.kodein.jit.internal.LocalJIT
 
 /**
  * Install [KodeinJIT] module and integration.
@@ -21,7 +21,7 @@ fun Kodein.MainBuilder.installJit() {
  * Module that must be imported in order to use [KodeinJIT].
  */
 val jitModule = Kodein.Module("KodeinJIT Module") {
-    Bind() from Singleton(NoScope(), erased(), erased()) { JITContainer(dkodein) }
+    Bind() from Singleton(NoScope(), erased(), erased()) { LocalJIT() }
 }
 
 /**
