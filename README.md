@@ -1,7 +1,9 @@
 # KodeinJIT
 Just-in-Time Runtime Bindings.
 
-**Warning**: The new v2.0 had a lot of breaking changes.
+This library was based on Kodein-jxInject but specialized for actual runtime instantiation instead of complying with javax.inject.
+
+**Warning**: The version v2.0 had a lot of breaking changes.
 Be sure to correctly migrate to it by checking the end of this document.
 
 ### Adding Dependency
@@ -11,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    compile 'org.kodein.di:kodein-di-generic-jvm:5.2.0'
-    compile 'pw.aru.kt:kodein-jit-bindings:LATEST'
+    compile 'org.kodein.di:kodein-di-generic-jvm:6.1.0'
+    compile 'pw.aru.kt:kodein-jit-bindings:X.Y.Z'
 }
 ```
 
