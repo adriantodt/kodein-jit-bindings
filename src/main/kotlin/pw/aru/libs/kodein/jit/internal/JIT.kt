@@ -1,11 +1,12 @@
 @file:Suppress("UNCHECKED_CAST")
-package pw.aru.kodein.jit.internal
+
+package pw.aru.libs.kodein.jit.internal
 
 import org.kodein.di.DKodein
 import org.kodein.di.TT
 import org.kodein.di.TypeToken
-import pw.aru.kodein.jit.JIT
-import pw.aru.kodein.jit.rawType
+import pw.aru.libs.kodein.jit.JIT
+import pw.aru.libs.kodein.jit.rawType
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type

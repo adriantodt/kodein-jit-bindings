@@ -1,4 +1,4 @@
-package pw.aru.kodein.jit
+package pw.aru.libs.kodein.jit
 
 import io.kotlintest.matchers.instanceOf
 import io.kotlintest.should

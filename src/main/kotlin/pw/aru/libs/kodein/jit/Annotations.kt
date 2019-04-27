@@ -1,4 +1,4 @@
-package pw.aru.kodein.jit
+package pw.aru.libs.kodein.jit
 
 /**
  * Defines that this should be the constructor used to build.

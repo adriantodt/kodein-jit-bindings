@@ -1,7 +1,7 @@
-package pw.aru.kodein.jit.internal
+package pw.aru.libs.kodein.jit.internal
 
 import org.kodein.di.DKodein
-import pw.aru.kodein.jit.Singleton
+import pw.aru.libs.kodein.jit.Singleton
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")

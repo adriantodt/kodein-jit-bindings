@@ -1,10 +1,10 @@
-package pw.aru.kodein.jit
+package pw.aru.libs.kodein.jit
 
 import org.kodein.di.DKodein
 import org.kodein.di.Kodein
 import org.kodein.di.direct
 import org.kodein.di.erased
-import pw.aru.kodein.jit.internal.LocalJIT
+import pw.aru.libs.kodein.jit.internal.LocalJIT
 
 /**
  * Creates a new just-in-time instance of the given class.

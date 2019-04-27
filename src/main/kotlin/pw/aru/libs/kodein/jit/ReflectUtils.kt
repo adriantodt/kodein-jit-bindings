@@ -1,4 +1,4 @@
-package pw.aru.kodein.jit
+package pw.aru.libs.kodein.jit
 
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
